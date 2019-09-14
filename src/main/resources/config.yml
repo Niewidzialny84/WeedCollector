@@ -1,0 +1,4 @@
+#Default true; Player can collect using only diamond hoe; false mean can collect using hand
+doHoeHarvest: true
+#Default false; Player can collect using any type of hoe; doHoeHarvest must be true
+useAnyHoe: false

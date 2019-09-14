@@ -1,0 +1,6 @@
+name: WeedCollector
+version: ${project.version}
+main: weedcollector.weedcollector.WeedCollector
+api-version: 1.13
+authors: [N1]
+description: Better collection of crops and other farming stuff
