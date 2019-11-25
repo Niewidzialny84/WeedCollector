@@ -2,3 +2,5 @@
 doHoeHarvest: true
 #Default false; Player can collect using any type of hoe; doHoeHarvest must be true
 useAnyHoe: false
+#Default true; AoE effect - collecting via diamond hoe allows to collect a 3x3 area
+doAoeHoe: true

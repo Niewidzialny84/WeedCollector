@@ -4,11 +4,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Random;
@@ -18,56 +21,110 @@ public class PlayerInteract implements Listener {
 
     private boolean doHoeHarverst;
     private boolean useAnyHoe;
+    private boolean doAoeHoe;
 
     PlayerInteract(Plugin plugin) {
-
         Bukkit.getPluginManager().registerEvents(this,plugin);
         doHoeHarverst = plugin.getConfig().getBoolean("doHoeHarvest",true);
         useAnyHoe = plugin.getConfig().getBoolean("useAnyHoe",false);
+        doAoeHoe = plugin.getConfig().getBoolean("doAoeHoe",false);
         plugin_ = plugin;
     }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK && !e.getPlayer().isSneaking()) {
-            if ((e.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_HOE
-                || e.getPlayer().getInventory().getItemInOffHand().getType() == Material.DIAMOND_HOE) && doHoeHarverst) {
+            PlayerInventory inventory = e.getPlayer().getInventory();
 
-                checkCrop(e);
-                //System.out.println(e.getPlayer().getName() + " " + e.getClickedBlock());
-
-            } else if(doHoeHarverst && useAnyHoe) {
-                if (e.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_HOE
-                || e.getPlayer().getInventory().getItemInOffHand().getType() == Material.DIAMOND_HOE
-                || e.getPlayer().getInventory().getItemInMainHand().getType() == Material.GOLDEN_HOE
-                || e.getPlayer().getInventory().getItemInOffHand().getType() == Material.GOLDEN_HOE
-                || e.getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_HOE
-                || e.getPlayer().getInventory().getItemInOffHand().getType() == Material.IRON_HOE
-                || e.getPlayer().getInventory().getItemInMainHand().getType() == Material.STONE_HOE
-                || e.getPlayer().getInventory().getItemInOffHand().getType() == Material.STONE_HOE
-                || e.getPlayer().getInventory().getItemInMainHand().getType() == Material.WOODEN_HOE
-                || e.getPlayer().getInventory().getItemInOffHand().getType() == Material.WOODEN_HOE) {
-                    checkCrop(e);
+            if(doHoeHarverst) {
+                if(isInAnyHand(inventory,Material.DIAMOND_HOE)) {
+                    if(doAoeHoe) {
+                        check3x3Area(e);
+                    } else {
+                        checkCrop(e);
+                    }
+                } else if (useAnyHoe) {
+                    if(isInAnyHand(inventory,Material.GOLDEN_HOE)) {
+                        checkCrop(e);
+                    } else if(isInAnyHand(inventory,Material.IRON_HOE)) {
+                        checkCrop(e);
+                    } else if(isInAnyHand(inventory,Material.STONE_HOE)) {
+                        checkCrop(e);
+                    } else if(isInAnyHand(inventory,Material.WOODEN_HOE)) {
+                        checkCrop(e);
+                    }
                 }
-            } else if(doHoeHarverst == false) {
+            } else {
                 checkCrop(e);
             }
+        }
+    }
 
+    private void check3x3Area(PlayerInteractEvent e) {
+        Block block = e.getClickedBlock();
+
+        int multiply = 0;
+
+        if(isInAnyHand(e.getPlayer().getInventory(),Material.DIAMOND_HOE)) {
+            int mainHand = e.getPlayer().getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
+            int offHand = e.getPlayer().getInventory().getItemInOffHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
+            if(mainHand>offHand) {
+                multiply = mainHand;
+            } else {
+                multiply = offHand;
+            }
+        }
+
+        checkCrop(block.getLocation().add(0,0,0).getBlock(),multiply);
+        checkCrop(block.getLocation().add(-1,0,1).getBlock(),multiply);
+        checkCrop(block.getLocation().add(0,0,1).getBlock(),multiply);
+        checkCrop(block.getLocation().add(1,0,1).getBlock(),multiply);
+        checkCrop(block.getLocation().add(1,0,0).getBlock(),multiply);
+        checkCrop(block.getLocation().add(1,0,-1).getBlock(),multiply);
+        checkCrop(block.getLocation().add(0,0,-1).getBlock(),multiply);
+        checkCrop(block.getLocation().add(-1,0,-1).getBlock(),multiply);
+        checkCrop(block.getLocation().add(-1,0,0).getBlock(),multiply);
+
+    }
+
+    private void checkCrop(Block block,int multiply) {
+        if (block != null) {
+            for(Crop crop : Crop.values()) {
+                if(block.getType().equals(crop.getBlock())) {
+                    setCrop(block,randomInt(crop.getMin()+multiply,crop.getMax()+multiply),crop.getDrop());
+                }
+            }
         }
     }
 
     private void checkCrop(PlayerInteractEvent e) {
-        if (e.getClickedBlock() != null) {
-            if (e.getClickedBlock().getType() == Material.WHEAT) {
-                setCrop(e.getClickedBlock(), randomInt(1, 2), Material.WHEAT);
-            } else if (e.getClickedBlock().getType() == Material.CARROTS) {
-                setCrop(e.getClickedBlock(), randomInt(1, 4), Material.CARROT);
-            } else if (e.getClickedBlock().getType() == Material.POTATOES) {
-                setCrop(e.getClickedBlock(), randomInt(1, 4), Material.POTATO);
-            } else if (e.getClickedBlock().getType() == Material.BEETROOTS) {
-                setCrop(e.getClickedBlock(), randomInt(1, 2), Material.BEETROOT);
-            } else if (e.getClickedBlock().getType() == Material.NETHER_WART) {
-                setCrop(e.getClickedBlock(), randomInt(1, 4), Material.NETHER_WART);
+        Block block = e.getClickedBlock();
+
+        int multiply = 0;
+
+        if(isInAnyHand(e.getPlayer().getInventory(),Material.DIAMOND_HOE)) {
+            int mainHand = e.getPlayer().getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
+            int offHand = e.getPlayer().getInventory().getItemInOffHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
+            if(mainHand>offHand) {
+                multiply = mainHand;
+            } else {
+                multiply = offHand;
+            }
+        }
+
+        if (block != null) {
+
+           /* if(block.getType().equals(Material.CACTUS)) {
+                block.setType(Material.AIR);
+                block.getWorld().dropItem(block.getLocation(), new ItemStack(Material.CACTUS, 1));
+                e.getPlayer().damage(0.5);
+                return;
+            } */
+
+            for(Crop crop : Crop.values()) {
+                if(block.getType().equals(crop.getBlock())) {
+                    setCrop(block,randomInt(crop.getMin()+multiply,crop.getMax()+multiply),crop.getDrop());
+                }
             }
         }
     }
@@ -83,7 +140,10 @@ public class PlayerInteract implements Listener {
 
     private int randomInt(int min,int max) {
         Random randomGenerator = new Random();
-        return randomGenerator.nextInt(max) + min;
+        return randomGenerator.nextInt(max+1-min) + min;
     }
 
+    private boolean isInAnyHand(PlayerInventory inventory, Material item) {
+        return inventory.getItemInMainHand().getType().equals(item) || inventory.getItemInOffHand().getType().equals(item);
+    }
 }
