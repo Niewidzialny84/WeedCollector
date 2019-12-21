@@ -8,6 +8,7 @@ public final class WeedCollector extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         PlayerInteract playerInteract = new PlayerInteract(this);
+        PlayerSneak playerSneak = new PlayerSneak(this);
 
     }
 
