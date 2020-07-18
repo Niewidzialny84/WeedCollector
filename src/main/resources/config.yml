@@ -4,5 +4,5 @@ doHoeHarvest: true
 useAnyHoe: false
 #Default true; AoE effect - collecting via diamond hoe allows to collect a 3x3 area
 doAoeHoe: true
-#Default true; Sneaking grows things faster by the cost of saturation and food
-doSneakGrow: true
+#Default false; Sneaking grows things faster by the cost of saturation and food (beta)
+doSneakGrow: false
