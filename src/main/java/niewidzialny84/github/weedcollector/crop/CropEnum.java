@@ -1,8 +1,9 @@
-package weedcollector.weedcollector;
+package niewidzialny84.github.weedcollector.crop;
 
 import org.bukkit.Material;
 
-public enum Crop {
+public enum CropEnum
+{
     WHEAT(Material.WHEAT,Material.WHEAT,1,2),
     CARROT(Material.CARROTS,Material.CARROT,1,4),
     POTATO(Material.POTATOES,Material.POTATO,1,4),
@@ -11,12 +12,12 @@ public enum Crop {
     COCOA_BEANS(Material.COCOA,Material.COCOA_BEANS,1,2),
     ;
 
-    int max;
-    int min;
-    Material block;
-    Material drop;
+    final int max;
+    final int min;
+    final Material block;
+    final Material drop;
 
-    Crop(Material block,Material drop, int min, int max) {
+    CropEnum(Material block, Material drop, int min, int max) {
         this.max = max;
         this.min = min;
         this.block = block;

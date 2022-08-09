@@ -1,5 +1,7 @@
-package weedcollector.weedcollector;
+package niewidzialny84.github.weedcollector.listeners;
 
+import niewidzialny84.github.weedcollector.utils.RandomGenerator;
+import niewidzialny84.github.weedcollector.WeedCollector;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -11,13 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.plugin.Plugin;
 
-public class PlayerSneak implements Listener {
-    private Plugin plugin;
+public class PlayerSneakListener implements Listener {
+    private final WeedCollector plugin;
 
-    public PlayerSneak(Plugin plugin) {
-        if(plugin.getConfig().getBoolean("doSneakGrow",true)) {
+    public PlayerSneakListener(WeedCollector plugin) {
+        if(plugin.getConfiguration().isDoSneakGrow()) {
             Bukkit.getPluginManager().registerEvents(this, plugin);
         }
 
@@ -58,14 +59,14 @@ public class PlayerSneak implements Listener {
                         if (cropAge.getAge() == cropAge.getMaximumAge())
                             continue;
 
-                        int chance = Rand.randomInt(1, 20);
+                        int chance = RandomGenerator.randomInt(1, 20);
                         if (chance == 10) {
                             cropAge.setAge(cropAge.getAge() + 1);
                             block.setBlockData(cropAge);
 
                             block.getWorld().spawnParticle(Particle.COMPOSTER,block.getLocation(),10,0.2,0.4,0.2);
 
-                            if(Rand.randomInt(1, 20) > 15) {
+                            if(RandomGenerator.randomInt(1, 20) > 15) {
                                 lowerFood = true;
                             }
                         }
@@ -82,7 +83,7 @@ public class PlayerSneak implements Listener {
                         }
 
 
-                        if (Rand.randomInt(1, 40) == 20) {
+                        if (RandomGenerator.randomInt(1, 40) == 20) {
                             sapling.setStage(sapling.getStage() + 1);
                             block.setBlockData(sapling);
 
@@ -100,7 +101,7 @@ public class PlayerSneak implements Listener {
         switch (block.getType()) {
             case OAK_SAPLING:
                 block.setType(Material.AIR);
-                if(Rand.randomInt(1,20) == 10) {
+                if(RandomGenerator.randomInt(1,20) == 10) {
                     block.getWorld().generateTree(block.getLocation(), TreeType.BIG_TREE);
                 } else {
                     block.getWorld().generateTree(block.getLocation(), TreeType.TREE);

@@ -1,8 +1,8 @@
-#Default true; Player can collect using only diamond hoe; false mean can collect using hand
+#Default true; Player can collect using only diamond hoe or netherite hoe; false mean can collect using hand
 doHoeHarvest: true
 #Default false; Player can collect using any type of hoe; doHoeHarvest must be true
 useAnyHoe: false
-#Default true; AoE effect - collecting via diamond hoe allows to collect a 3x3 area
+#Default true; AoE effect - collecting via diamond hoe and netherite hoe allows to collect a 3x3 area
 doAoeHoe: true
-#Default false; Sneaking grows things faster by the cost of saturation and food (beta)
+#Default false; Sneaking grows things faster by the cost of saturation and food (WARNING!!! beta could crash)
 doSneakGrow: false

@@ -1,6 +1,13 @@
 name: WeedCollector
 version: ${project.version}
-main: weedcollector.weedcollector.WeedCollector
-api-version: 1.13
-authors: [N1]
+main: niewidzialny84.github.weedcollector.WeedCollector
+api-version: 1.19
+authors: [Niewidzialny84]
 description: Better collection of crops and other farming stuff
+
+commands:
+  weedcollector:
+    permission: weedcollector
+    usage: /weedcollector
+    permission-message: You cannot.
+
